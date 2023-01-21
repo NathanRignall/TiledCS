@@ -5,6 +5,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Xml;
 
+using Microsoft.Xna.Framework;
+
 namespace TiledCS
 {
     /// <summary>
@@ -111,13 +113,29 @@ namespace TiledCS
         /// <exception cref="TiledException">Thrown when the map could not be loaded or is not in a correct format</exception>
         public TiledMap(string path)
         {
-            // Check the file
-            if (!File.Exists(path))
+
+            // open stream
+            Stream fileStream = TitleContainer.OpenStream(path);
+            
+            // check file stream for null
+            if (fileStream == null)
             {
                 throw new TiledException($"{path} not found");
             }
 
-            var content = File.ReadAllText(path);
+            // put content into string
+            string content = "";
+            
+            // loop over
+            using (StreamReader reader = new StreamReader(fileStream))
+            {
+                string line = reader.ReadLine();
+                while (line != null)
+                {
+                    content += line;
+                    line = reader.ReadLine();
+                }
+            }
 
             if (path.EndsWith(".tmx"))
             {
@@ -639,8 +657,6 @@ namespace TiledCS
         public Dictionary<int, TiledTileset> GetTiledTilesets(string src)
         {
             var tilesets = new Dictionary<int, TiledTileset>();
-            var info = new FileInfo(src);
-            var srcFolder = info.Directory;
 
             if (Tilesets == null)
             {
@@ -649,14 +665,18 @@ namespace TiledCS
 
             foreach (var mapTileset in Tilesets)
             {
-                var path = $"{srcFolder}/{mapTileset.source}";
+                var path = $"{src}{mapTileset.source}";
 
                 if (mapTileset.source == null)
                 {
                     continue;
                 }
-
-                if (File.Exists(path))
+                
+                // open stream
+                Stream fileStream = TitleContainer.OpenStream(path);
+            
+                // check file stream for null
+                if (fileStream != null)
                 {
                     tilesets.Add(mapTileset.firstgid, new TiledTileset(path));
                 }

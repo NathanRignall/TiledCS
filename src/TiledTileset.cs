@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Xml;
+using Microsoft.Xna.Framework;
 
 namespace TiledCS
 {
@@ -81,13 +82,28 @@ namespace TiledCS
         /// <exception cref="TiledException">Thrown when the file could not be found or parsed</exception>
         public TiledTileset(string path)
         {
-            // Check the file
-            if (!File.Exists(path))
+            // open stream
+            Stream fileStream = TitleContainer.OpenStream(path);
+            
+            // check file stream for null
+            if (fileStream == null)
             {
                 throw new TiledException($"{path} not found");
             }
             
-            var content = File.ReadAllText(path);
+            // put content into string
+            string content = "";
+            
+            // loop over
+            using (StreamReader reader = new StreamReader(fileStream))
+            {
+                string line = reader.ReadLine();
+                while (line != null)
+                {
+                    content += line;
+                    line = reader.ReadLine();
+                }
+            }
 
             if (path.EndsWith(".tsx"))
             {
