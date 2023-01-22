@@ -1,3 +1,7 @@
+# Modified version of TiledCS
+This is a modified version of TiledCS. It is modified to work to use TitleContainer for loading files in XNA/MonoGame.
+Not a perfect solution, but it works.
+
 > **Important!** It is with great sadness that I have to anounce that I no longer can find enough time to care for the project as it is. Not only do I personally no longer work with C#, there are other projects that require my attention.
 
 # TiledCS
